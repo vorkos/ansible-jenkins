@@ -1,0 +1,12 @@
+- hosts: localhost
+  vars:
+    jenkins_hostname: localhost
+    solita_jenkins_security_realm: jenkins
+    solita_jenkins_users:
+      - admin
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - role: java
+    - role: jenkins
+      become: true

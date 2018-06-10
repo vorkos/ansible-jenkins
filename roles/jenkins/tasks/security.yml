@@ -1,0 +1,54 @@
+---
+- name: Create an SSH key for the jenkins Unix user
+  become: yes
+  user: name=jenkins generate_ssh_key=yes
+  register: user
+
+- set_fact:
+    solita_jenkins_public_key: "{{ user.ssh_public_key }}"
+
+- Name: create auth file  
+  become: yes
+  copy:
+    content: "{{  jenkins_admin_username  }}:{{ jenkins_admin_password }}"
+    dest: /var/lib/jenkins/s_jenkins_auth
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+  tags: always
+
+- name: Check if config.xml exists
+  stat:
+    path: /var/lib/jenkins/config.xml
+  register: config_xml
+
+- name: Stop Jenkins to create config.xml
+  service: 
+    name: jenkins
+    state: stopped
+  when: solita_jenkins_restart and (not config_xml.stat.exists)
+
+- name: Configure Authorize Project plugin
+  become: yes
+  copy:
+    src: jenkins.security.QueueItemAuthenticatorConfiguration.xml
+    dest: /var/lib/jenkins/jenkins.security.QueueItemAuthenticatorConfiguration.xml
+    owner: jenkins
+    group: jenkins
+    mode: u=rw,go=r
+    force: no
+  register: authorize_project
+
+- name: Disable script security for Job DSL scripts
+  become: yes
+  copy:
+    src: javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration.xml
+    dest: /var/lib/jenkins/javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration.xml
+    owner: jenkins
+    group: jenkins
+    mode: u=rw,go=r
+    force: no
+  register: disable_script_security
+
+- include: restart.yml
+  when: (authorize_project is changed) or (disable_script_security is changed)
