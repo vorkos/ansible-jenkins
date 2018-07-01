@@ -1,7 +1,9 @@
 ---
 - name: Create an SSH key for the jenkins Unix user
   become: yes
-  user: name=jenkins generate_ssh_key=yes
+  user: 
+    name: jenkins
+    generate_ssh_key: yes
   register: user
 
 - set_fact:
