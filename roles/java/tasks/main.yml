@@ -17,6 +17,7 @@
 # Install Java 
 
 - name: Install Java 8
+  become: yes
   apt:
    name: oracle-java8-installer
    state: present

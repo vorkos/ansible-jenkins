@@ -1,12 +1,20 @@
-- hosts: localhost
+- hosts: Jenkins
+  gather_facts: False
+  become: yes
+  pre_tasks:
+    - name: Install python for Ansible
+      become: yes
+      raw: sudo bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal)"
+      register: output
+      changed_when: output.stdout != ""
+      tags: always
+    - setup:
   vars:
     jenkins_hostname: localhost
     solita_jenkins_security_realm: jenkins
     solita_jenkins_users:
       - admin
-  remote_user: ubuntu
-  become: yes
   roles:
+#    - role: provision
     - role: java
     - role: jenkins
-      become: true
