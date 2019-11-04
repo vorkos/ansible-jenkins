@@ -25,10 +25,6 @@ jenkins_plugins:
   - extended-read-permission
   - ssh-slaves
   - build-pipeline-plugin
-  - azure-vm-agents
-  - windows-azure-storage
-  - azure-vmss
-  - azure-cli
   - packer
   - icon-shim
   - matrix-auth
@@ -43,13 +39,12 @@ jenkins_plugins:
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
 jenkins_plugin_timeout: 30
-jenkins_plugins_install_dependencies: yes
+jenkins_plugins_install_dependencies: true
+jenkins_updates_url: "https://updates.jenkins.io"
 
 jenkins_admin_username: admin
 jenkins_admin_password: admin
 jenkins_admin_password_file: ""
-jenkins_admin_token: "dc33cz6Lshkl8TlhDXha"
-jenkins_admin_token_file: ""
 
 jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
@@ -59,6 +54,13 @@ jenkins_init_changes:
     value: "--prefix={{ jenkins_url_prefix }}"
   - option: "{{ jenkins_java_options_env_var }}"
     value: "{{ jenkins_java_options }}"
+
+# If Jenkins is behind a proxy, configure this.
+jenkins_proxy_host: ""
+jenkins_proxy_port: ""
+jenkins_proxy_noproxy:
+  - "127.0.0.1"
+  - "localhost"
 
 solita_jenkins_plugins: []
 solita_jenkins_users: []

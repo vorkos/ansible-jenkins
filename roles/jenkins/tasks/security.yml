@@ -9,7 +9,7 @@
 - set_fact:
     solita_jenkins_public_key: "{{ user.ssh_public_key }}"
 
-- Name: create auth file  
+- name: create auth file  
   become: yes
   copy:
     content: "{{  jenkins_admin_username  }}:{{ jenkins_admin_password }}"
